@@ -1,27 +1,15 @@
-# Configure AWS provider
-provider "aws" {
-  region = "us-east-1"
-}
-
-# ---------------------------
-# 1. VPC (Network)
-# ---------------------------
+# VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-
+  cidr_block = var.vpc_cidr
   tags = {
     Name = "mpesa-vpc"
   }
 }
 
-# ---------------------------
-# 2. Subnets
-# ---------------------------
-
-# Public subnet (for  the app)
+# Public Subnet
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
 
   tags = {
@@ -29,23 +17,20 @@ resource "aws_subnet" "public" {
   }
 }
 
-# Private subnet (for the database)
+# Private Subnet
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.2.0/24"
+  cidr_block = var.private_subnet_cidr
 
   tags = {
     Name = "private-subnet"
   }
 }
 
-# ---------------------------
-# 3. Security Group
-# ---------------------------
+# Security Group (Least privilege - only HTTP allowed)
 resource "aws_security_group" "app_sg" {
   vpc_id = aws_vpc.main.id
 
-  # Allow HTTP traffic (for  the app)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -53,7 +38,7 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Allow all outgoing traffic
+  # Allow internal communication only
   egress {
     from_port   = 0
     to_port     = 0
@@ -62,11 +47,9 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-# ---------------------------
-# 4. Compute (EC2)
-# ---------------------------
-resource "aws_instance" "app_server" {
-  ami           = "ami-0c55b159cbfafe1f0" # placeholder AMI
+# EC2 Instance (to run container)
+resource "aws_instance" "app" {
+  ami           = "ami-0c55b159cbfafe1f0" # Placeholder
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public.id
 
@@ -76,36 +59,18 @@ resource "aws_instance" "app_server" {
     Name = "mpesa-app-server"
   }
 }
+
 # In production, this password would be retrieved from AWS Secrets Manager
-# ---------------------------
-# 5. Database (RDS - PostgreSQL)
-# ---------------------------
+# RDS (PostgreSQL in private subnet)
 resource "aws_db_instance" "db" {
-  allocated_storage = 20
-  engine            = "postgres"
-  instance_class    = "db.t3.micro"
+  allocated_storage    = 20
+  engine               = "postgres"
+  instance_class       = "db.t3.micro"
+  db_name              = "payments_db"
+  username             = "admin"
+  password             = "examplepassword" # Placeholder (NOT production safe)
 
-  db_name  = "payments_db"
-  username = "admin"
+  skip_final_snapshot  = true
 
-  # ⚠️ Placeholder only
-  password = "examplepassword"
-
-  skip_final_snapshot = true
-
-  # Ideally placed in private subnet
-  # (simplified here for clarity)
-
-  tags = {
-    Name = "mpesa-db"
-  }
+  vpc_security_group_ids = [aws_security_group.app_sg.id]
 }
-
-# ---------------------------
-# 6. Secrets (Concept Only)
-# ---------------------------
-
-# In production:
-# - Passwords would NOT be hardcoded
-# - They would be stored in AWS Secrets Manager
-# - The app would fetch them securely at runtime
