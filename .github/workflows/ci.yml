@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:   # Trigger pipeline on PRs
+  push:
+    branches: [main]   # Also run on push to main branch
+
+env:
+  IMAGE_NAME: mpesa-devops-app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        # Pulls latest code from repository
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+        # Ensures consistent runtime environment
+
+      - name: Install dependencies
+        run: pip install -r app/requirements.txt
+        # Installs required Python packages
+
+      - name: Lint
+        run: |
+          pip install flake8
+          flake8 app/
+        # Checks code quality and style issues
+
+      - name: Run tests
+        run: echo "No tests implemented yet"
+        # Placeholder for test execution
+
+      - name: Build Docker image
+        run: |
+          docker build -t $IMAGE_NAME:${{ github.sha }} .
+        # Builds image tagged with commit SHA for traceability
+
+      - name: Tag as latest
+        run: |
+          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
+        # Also tag image as latest for easy reference
+
+      - name: Push image
+        run: echo "Push image to container registry here"
+        # Placeholder for pushing to Docker Hub/ECR/ACR
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Manual approval required
+        run: echo "Awaiting approval before production deployment"
+        # Prevents accidental deployments
+
+      - name: Deploy application
+        run: echo "Deploying application to production"
+        # Placeholder for deployment step
+
+      - name: Rollback strategy
+        run: |
+          echo "If deployment fails, redeploy previous image tag"
+        # Enables quick recovery in case of failure
