@@ -112,55 +112,6 @@ Designed to integrate with:
 - AWS Secrets Manager
 - Azure Key Vault
 
-## An architecture diagram showing how all components connect
-
-#### M-PESA DevOps Architecture
-```
-
-                      ┌───────────────────────┐
-                     │        Client         │
-                     │   (Browser / API)     │
-                     └──────────┬────────────┘
-                                │
-                                ▼
-                         ┌────────────┐
-                         │  Internet  │
-                         └─────┬──────┘
-                               │
-                               ▼
-
-    ┌──────────────────────────────────────────────────────┐
-    │                         VPC                          │
-    │                                                      │
-    │   ┌──────────────────────────────────────────────┐   │
-    │   │               Public Subnet                  │   │
-    │   │                                              │   │
-    │   │     ┌──────────────────────────────┐         │   │
-    │   │     │        EC2 Instance          │         │   │
-    │   │     │  (App + Nginx Reverse Proxy) │         │   │
-    │   │     └──────────────┬───────────────┘         │   │
-    │   │                    │                         │   │
-    │   └────────────────────┼─────────────────────────┘   │
-    │                        │
-    │                        ▼
-    │   ┌──────────────────────────────────────────────┐
-    │   │               Private Subnet                 │
-    │   │                                              │
-    │   │        ┌──────────────────────────┐          │
-    │   │        │     RDS PostgreSQL       │          │
-    │   │        │        Database          │          │
-    │   │        └──────────────────────────┘          │
-    │   │                                              │
-    │   └──────────────────────────────────────────────┘
-    │                                                      │
-    └──────────────────────────────────────────────────────┘
-```
-### Key Notes
-- Nginx acts as a reverse proxy to route incoming traffic
-- Application runs in a public subnet for accessibility
-- Database is isolated in a private subnet for security
-- Architecture supports scalability and separation of concerns
-
 # TASK 3:
 ## Infrastructure as Code (Terraform)
 
@@ -175,7 +126,18 @@ Planned components:
 - IAM roles with least privilege
 - External secrets management
 
+## An architecture diagram showing how all components connect
 
+#### M-PESA DevOps Architecture
+```
+![Architecture Diagram](Architecture.png)
+
+```
+### Key Notes
+- Nginx acts as a reverse proxy to route incoming traffic
+- Application runs in a public subnet for accessibility
+- Database is isolated in a private subnet for security
+- Architecture supports scalability and separation of concerns
 
 ### Design Considerations
 - Database is isolated in a private subnet for security
