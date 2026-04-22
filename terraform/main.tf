@@ -74,3 +74,21 @@ resource "aws_db_instance" "db" {
 
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 }
+
+# ---------------------------
+# Secrets Manager (Production Approach - NOT executed here)
+# ---------------------------
+
+# In production, sensitive values like DB passwords should NOT be hardcoded.
+# They should be stored securely in AWS Secrets Manager.
+
+data "aws_secretsmanager_secret" "db_password" {
+  name = "db_password"
+}
+
+# This is how the secret would be retrieved (conceptually):
+# data "aws_secretsmanager_secret_version" "db_password_value" {
+#   secret_id = data.aws_secretsmanager_secret.db_password.id
+# }
+
+# The application or DB connection would then use this value at runtime.
