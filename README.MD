@@ -130,7 +130,7 @@ Planned components:
 
 #### M-PESA DevOps Architecture
 
-![Architecture Diagram](architecture.png)
+![Architecture Diagram](architecture-new.png)
 
 ### Key Notes
 - Nginx acts as a reverse proxy to route incoming traffic
