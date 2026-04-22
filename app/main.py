@@ -16,4 +16,3 @@ def payments():
 @app.post("/payments")
 def create_payment():
     return {"status": "payment created"}
-    
