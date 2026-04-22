@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -15,3 +16,4 @@ def payments():
 @app.post("/payments")
 def create_payment():
     return {"status": "payment created"}
+    
