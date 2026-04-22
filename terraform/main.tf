@@ -76,7 +76,7 @@ resource "aws_db_instance" "db" {
 }
 
 # ---------------------------
-# Secrets Manager (Production Approach - NOT executed here)
+# Secrets Manager (Production Approach )
 # ---------------------------
 
 # In production, sensitive values like DB passwords should NOT be hardcoded.
