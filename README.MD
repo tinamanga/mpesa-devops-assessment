@@ -33,33 +33,8 @@ A minimal FastAPI application with two endpoints:
 ```bash
 docker compose up --build
 ```
-## Project Structure
 
-mpesa-devops-Test/
-│
-├── app/
-│   ├── main.py
-│   ├── requirements.txt
-│
-├── Dockerfile
-├──docker-compose.yml
-│
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   ├── provider.tf
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
-├── nginx/
-│   └── default.conf
-│
-├── .env
-├── README.MD
-
+```
 Access endpoints
 http://localhost/health
 http://localhost/payments
@@ -155,7 +130,7 @@ Planned components:
 
 #### M-PESA DevOps Architecture
 
-![Architecture Diagram](architecture-new.png)
+![Architecture Diagram](architecture.png)
 
 ### Key Notes
 - Nginx acts as a reverse proxy to route incoming traffic
